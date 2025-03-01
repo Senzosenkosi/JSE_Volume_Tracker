@@ -1,0 +1,22 @@
+#PROGRAM OBJECTIVES 
+
+1. The program seeks to track anormalies in VOLUME over time traded per stock from the largest banks in South Africa. 
+2. Direction of the Volume per stock, BUY or SELL.
+3. Distribution of the Volume traded,with respect to time and calender month. 
+4. Real Market sentiment
+
+
+
+
+DATA
+1. Some Banks provide this information freely through paid API connection. 
+2. SBG securities has been helpful with manuel datasets. 
+3. Efficient tracker NEEDS 
+
+
+
+Which Stock to track volume ? 
+
+1. A stock with less focus from institutional buyers, pension funds
+2. A stock with market capitalisation of less 10B why ? Anormalies would be easier to track and identify 
+
