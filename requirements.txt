@@ -1,0 +1,12 @@
+numpy
+streamlit
+matplotlib
+plotly
+pandas
+scikit-learn
+seaborn
+Faker
+seaborn 
+os
+pandas 
+numpy
