@@ -52,9 +52,25 @@ for index, row in symbol_data.iterrows():
         symbol_data.at[index, 'Value_group']  = 'More than 100M'
     
     
+
+plt.figure(
+    figsize=(8, 4),  # Set the figure size here
+    dpi=100,  # Set the dpi (or resolution) here
+)
+list_ordering = ["Less than 1M", "1M to 5M", "5M to 10M", "10M to 100M", "More than 100M"]
+symbol_data["Value_group"] = symbol_data["Value_group"].astype("category", categories=list_ordering, ordered=True)
+# Create a horizontal barplot
+sns.barplot(
+    data=symbol_data,  # Specify the data to use
+    x="Value_group",  # Set the variable for the length of the bars
+    y="Value",  # Set the categorical variable on the y-axis
+    ci=False,  # Turn of confidence intervals
+    hue="Value_group",  # Set the variable to split by
+)
+plt.show()
     
-plt.plot(symbol_data['Value'], label='Value', color='blue')   
-plt.title('GND.JSE Value Over Time')
+plt.plot(symbol_data['Value'], label='Volume', color='blue')   
+plt.title('GND.JSE Traded Volume Over Time')
 plt.xlabel('Date')
 plt.ylabel('Volume Traded')
 plt.legend()
@@ -63,7 +79,7 @@ plt.grid(True, linestyle='--', alpha=0.6) # Add a grid for easier reading
 plt.tight_layout() #prevents labels from being cut off
 plt.show() 
  
- 
+
  
     
     

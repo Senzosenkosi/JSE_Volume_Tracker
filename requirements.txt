@@ -6,6 +6,5 @@ scikit-learn
 seaborn
 Faker
 seaborn
-os
 pandas
 numpy
