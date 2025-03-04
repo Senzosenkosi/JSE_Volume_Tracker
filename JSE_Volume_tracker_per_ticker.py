@@ -7,6 +7,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import matplotlib.ticker as ticker
+import mplcursors
+import matplotlib.dates as mdates
 
 # Replace 'your_file.xlsx' with the path to your Excel file
 #file_path = '/path/to/your_file.xlsx' 
@@ -25,12 +27,13 @@ def process_file(file_path):
     symbol_data['year'] = symbol_data['Date'].dt.year
 
     symbol_data.set_index('Date', inplace=True)
+    
     for index, row in symbol_data.iterrows():
         
         if 'k' in row['Volume']:
             row['Volume'] = row['Volume'].replace('k', '')
             row['Volume'] = float(row['Volume']) * 1000  
-            symbol_data.at[index, 'Volume'] = row['Volume']
+            symbol_data.at[index, 'Volume'] = row['Volume'] 
         elif 'm' in row['Volume']:
             row['Volume'] = row['Volume'].replace('m', '')
             row['Volume'] = float(row['Volume']) * 1000000
@@ -60,7 +63,7 @@ def process_file(file_path):
     
 def plt__line_graph(symbol_data):
     plt.figure(figsize=(12, 6))  # Set the size of the plot
-    plt.plot(symbol_data['Value'], label='Volume', color='Green')    
+    line1=plt.plot(symbol_data['Value'], label='Volume', color='Green')    
     plt.title(symbol_data['JSE_symbol'].unique() + " " +'Traded Volume Over Time')
     plt.xlabel('Date')
     plt.ylabel('Volume Traded in millions')
@@ -68,7 +71,26 @@ def plt__line_graph(symbol_data):
     plt.grid(True, linestyle='--', alpha=0.8) # Add a grid for easier reading
         
     plt.tight_layout() #prevents labels from being cut off
-    plt.show()  # Display the plot 
+    
+    
+    def show_info(sel):
+        x, y = sel.target
+        xdata = sel.artist.get_xdata()
+        ydata = sel.artist.get_ydata()
+        x_datetime = pd.to_datetime(x, unit='ms').to_numpy()
+        index = (np.abs(xdata - x_datetime)).argmin()
+        date = sel.artist.get_xdata()[index]
+        volume = sel.artist.get_ydata()[index]
+        share_name = sel.artist.get_label()
+
+        # Convert numpy.datetime64 to Python datetime
+        date_py = pd.to_datetime(date).to_pydatetime()
+
+        sel.annotation.set_text(f"{share_name}\n at Date: {date_py.strftime('%Y-%m-%d')}\nVolume: {volume:.2f}")   
+    
+    mplcursors.cursor(line1, hover=True).connect("add", show_info)
+    
+    plt.show()  # Display the plot
 
 
 def bar_graph(symbol_data):
@@ -108,41 +130,14 @@ def Bar_view(symbol_data):
     # ax.yaxis.set_major_formatter(lblFormatter)
     plt.show()
 
-
-def plot_stock_volumes(df1, df2, share_name1, share_name2,
-                       volume_column1='Volume', volume_column2='Volume',
-                       title='Stock Volume Traded', date_format='%Y-%m-%d'):
-
-        plt.figure(figsize=(12, 6))
-        print(df1['Date'])
-        plt.plot(df1['Date'], df1[volume_column1], label=share_name1)
-        plt.plot(df2['Date'], df2[volume_column2], label=share_name2)
-
-        plt.title(title)
-        plt.xlabel('Date')
-        plt.ylabel('Volume Traded (Millions)')
-        plt.grid(True)
-        plt.xticks(rotation=45)
-        plt.tight_layout()
-        plt.legend()  # Add legend to distinguish lines
-
-        # Format y-axis to millions
-        def millions(x, pos):
-            return '%1.1fM' % (x * 1e-6)
-
-        formatter = ticker.FuncFormatter(millions)
-        plt.gca().yaxis.set_major_formatter(formatter)
-
-        plt.show()
-
-
-list_of_files = []    
+list_of_files = []   
+final_df = pd.DataFrame()
 for x in os.listdir():
-    if x.endswith(".csv"):   
+    if x.endswith(".csv") and 'Time Series' in x:   
         print("file being processed is: ", x)
         processed_file = process_file(x)
         list_of_files.append(processed_file)
-        plt__line_graph(processed_file)
+       # plt__line_graph(processed_file)
         #bar_graph(processed_file)
         # diff_graph(processed_file)
         #Bar_view(processed_file)
