@@ -96,31 +96,35 @@ final_volume_df = Create_Volume_df(list_of_files)
 # final_df = final_Value_df.merge(final_volume_df, on='Date', how='inner')
 # final_df.set_index('Date', inplace=True)
 # final_df = final_df.resample('W').mean()
-print(final_Value_df.head())
-print(final_volume_df.head())
+# print(final_Value_df.head())
+# print(final_volume_df.head())
 
-# app = Dash(__name__)
+sd= []
+for key in list_of_files.keys():
+    sd.append(key)
+print(sd)
+app = Dash(__name__)
 
-# app.layout = html.Div([
-#     html.H4('Volume analysis Per stock'),
-#     dcc.Graph(id="time-series-chart"),
-#     html.P("Select stock:"),
-#     dcc.Dropdown(
-#         id="ticker",
-#         options=["GND", "FB", "NFLX"],
-#         value="AMZN",
-#         clearable=False,
-#     ),
-# ])
+app.layout = html.Div([
+    html.H4('Volume analysis Per stock'),
+    dcc.Graph(id="time-series-chart"),
+    html.P("Select stock:"),
+    dcc.Dropdown(
+        id="ticker",
+        options=sd,
+        value='GND.JSE',
+        clearable=False,
+    ),
+])
 
-# @app.callback(
-#     Output("time-series-chart", "figure"), 
-#     Input("ticker", "value"))
+@app.callback(
+    Output("time-series-chart", "figure"), 
+    Input("ticker", "value"))
 
-# def display_time_series(ticker):
-#    # df = px.data.stocks() # replace with your own data source
-#     df = symbol_data 
-#     fig = px.line(df, x='Date', y='Open')
-#     return fig
+def display_time_series(ticker):
+   # df = px.data.stocks() # replace with your own data source
+    df = final_Value_df
+    fig = px.line(df, x='Date', y=ticker)
+    return fig
 
-# app.run_server(debug=True)
+app.run_server(debug=True)
