@@ -53,47 +53,51 @@ def process_file(file_path):
     return symbol_data
 
 def Create_Volume_df(list_of_files):
+    
     final_volume_df = pd.DataFrame()
     date_df = pd.DataFrame()
+    
     for key, value in list_of_files.items():
-        date_df[key] = value['Date']
+        date_df['date'] = value['Date']
         df=pd.DataFrame(value)
-        final_volume_df[key] = df['Value'].astype(float) / 1000000
-        # final_df['Volume'] = final_df['Volume'].astype(float)
-        # final_df['Volume'] = final_df['Volume'].apply(lambda x: x/1000000) if final_df['Volume'] > 0.0 else final_df['Volume']
-        # final_df['Volume'] = final_df['Volume'].round(2)
-        final_volume_df['Date'] = date_df['Date']
-        
+        final_volume_df[key] = df['Volume'].astype(float) / 1000   
+            
+    final_volume_df['Date'] = pd.to_datetime(date_df['date'])
+    
     return final_volume_df
 
 def Create_Value_df(list_of_files):
+       
     final_Value_df = pd.DataFrame()
     date_df = pd.DataFrame()
-    for key, value in list_of_files.items():
-        date_df[key] = value['Date']
-        print(date_df.head())
+    
+    for key, value in list_of_files.items():       
+        date_df['date'] = value['Date']
         df=pd.DataFrame(value)
         final_Value_df[key] = df['Value'].astype(float) / 1000000
-        # final_df['Volume'] = final_df['Volume'].astype(float)
-        # final_df['Volume'] = final_df['Volume'].apply(lambda x: x/1000000) if final_df['Volume'] > 0.0 else final_df['Volume']
-        # final_df['Volume'] = final_df['Volume'].round(2)
-        final_Value_df['Date'] = date_df['Date']
-                
-   # final_df['Date'] = date_df['Date'] 
+
+    final_Value_df['Date'] = pd.to_datetime(date_df['date'])
+
     return final_Value_df
 
 list_of_files={}
 for x in os.listdir():
     if x.endswith(".csv") and 'Time Series' in x:   
-        print("file being processed is: ", x)
+       # print("file being processed is: ", x)
         JSE_symbol = re.search(r'\((.*?)\)', x)
         processed_file = process_file(x)
         list_of_files[JSE_symbol.group(1)] = processed_file
         
-               
-final_df = Create_Volume_df(list_of_files)
-print(final_df.head())
+        
 
+#print(list_of_files)              
+final_Value_df = Create_Value_df(list_of_files)
+final_volume_df = Create_Volume_df(list_of_files)
+# final_df = final_Value_df.merge(final_volume_df, on='Date', how='inner')
+# final_df.set_index('Date', inplace=True)
+# final_df = final_df.resample('W').mean()
+print(final_Value_df.head())
+print(final_volume_df.head())
 
 # app = Dash(__name__)
 
