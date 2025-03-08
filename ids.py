@@ -1,0 +1,5 @@
+SHARE_DROP_DOWN = "Share-Dropdown"
+DATE_PICKER = "Date-Picker"
+TIME_SERIES_CHART = "Time-Series-Chart"
+TICKER = "Ticker"
+STOCKS = "Stocks"
